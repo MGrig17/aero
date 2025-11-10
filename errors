@@ -1,0 +1,12 @@
+C:\Users\Holo\Documents\Arduino\lcd-test\lcd-test.ino: In function 'void setup()':
+C:\Users\Holo\Documents\Arduino\lcd-test\lcd-test.ino:17:19: error: no matching function for call to 'LiquidCrystal_I2C::init(SoftWire&)'
+   lcd.init(softI2C);                    // initialize the lcd with SoftWire
+                   ^
+In file included from C:\Users\Holo\Documents\Arduino\lcd-test\lcd-test.ino:2:0:
+c:\Users\Holo\Documents\Arduino\libraries\LiquidCrystal_I2C/LiquidCrystal_I2C.h:87:8: note: candidate: void LiquidCrystal_I2C::init()
+   void init();
+        ^~~~
+c:\Users\Holo\Documents\Arduino\libraries\LiquidCrystal_I2C/LiquidCrystal_I2C.h:87:8: note:   candidate expects 0 arguments, 1 provided
+exit status 1
+
+Compilation error: no matching function for call to 'LiquidCrystal_I2C::init(SoftWire&)'
