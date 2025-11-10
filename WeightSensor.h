@@ -1,6 +1,7 @@
 #ifndef WEIGHT_SENSOR_H
 #define WEIGHT_SENSOR_H
 
+#include "Arduino.h"
 #include "HX711.h"
 #include "config.h"
 

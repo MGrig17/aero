@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "Arduino.h"
+
 // Пины для тензодатчиков
 const int SENSOR1_DT_PIN = 2;
 const int SENSOR1_SCK_PIN = 3;

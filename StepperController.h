@@ -1,6 +1,7 @@
 #ifndef STEPPER_CONTROLLER_H
 #define STEPPER_CONTROLLER_H
 
+#include "Arduino.h"
 #include "AccelStepper.h"
 #include "config.h"
 
