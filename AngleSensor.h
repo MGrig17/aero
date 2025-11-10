@@ -1,9 +1,10 @@
 #ifndef ANGLE_SENSOR_H
 #define ANGLE_SENSOR_H
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include <Wire.h>
 #include <AS5600.h>
+
 
 class AngleSensor {
 private:

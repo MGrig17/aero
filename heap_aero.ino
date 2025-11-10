@@ -52,5 +52,5 @@ void loop() {
     // Управление степпером
     stepperController.run();
     
-    delay(100);
+    //delay(100);
 }

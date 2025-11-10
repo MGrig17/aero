@@ -1,14 +1,13 @@
 #ifndef STEPPER_CONTROLLER_H
 #define STEPPER_CONTROLLER_H
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include "AccelStepper.h"
 #include "config.h"
 
 class StepperController {
 private:
     AccelStepper stepper;
-    int currentRealPosition;
     bool isHomed;
     
 public:
@@ -16,8 +15,6 @@ public:
     void begin();
     void home();
     void moveSteps(int steps);
-    void moveToVirtualPosition(int virtualPos);
-    int getVirtualPosition();
     void printStatus();
     void run();
 };

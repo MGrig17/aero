@@ -1,7 +1,7 @@
 #include "WeightSensor.h"
 
-float CALIBRATION_FACTOR_1 = -1000.0;
-float CALIBRATION_FACTOR_2 = -1000.0;
+float CALIBRATION_FACTOR_1 = 1000.0;
+float CALIBRATION_FACTOR_2 = 5000.0;
 
 WeightSensor weightSensor;
 
