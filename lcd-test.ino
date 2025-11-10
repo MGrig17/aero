@@ -1,33 +1,66 @@
 #include <SoftWire.h>
 #include <LiquidCrystal_I2C.h>
 
-// Создаем SoftWire объект с пинами A1 (SDA) и A2 (SCL)
-SoftWire softI2C(A1, A2);
+// Настройка пинов
+#define SDA_PIN A1
+#define SCL_PIN A2
 
-// Инициализируем LCD с SoftWire и адресом 0x27
+SoftWire softI2C(SDA_PIN, SCL_PIN);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 void setup()
 {
-  // Инициализируем SoftWire
+  Serial.begin(9600);
+  
+  // Инициализация SoftWire
   softI2C.begin();
+  softI2C.setClock(100000);  // 100kHz
   softI2C.setTimeout(1000);
   
-  // Инициализируем LCD с SoftWire
-  lcd.init(softI2C);                    // initialize the lcd with SoftWire
-  lcd.backlight();
+  Serial.println("Testing LCD with SoftWire...");
+  Serial.print("SDA: A1, SCL: A2, Address: 0x27");
   
-  // Print a message to the LCD.
-  lcd.setCursor(3,0);
-  lcd.print("Hello, world!");
-  lcd.setCursor(2,1);
-  lcd.print("Ywrobot Arduino!");
-  lcd.setCursor(0,2);
-  lcd.print("Arduino LCM IIC 2004");
-  lcd.setCursor(2,3);
-  lcd.print("Power By Ec-yuan!");
+  // Проверяем подключение LCD
+  softI2C.beginTransmission(0x27);
+  byte error = softI2C.endTransmission();
+  
+  if (error == 0) {
+    Serial.println(" - LCD FOUND!");
+    
+    // Инициализация LCD
+    lcd.init();
+    lcd.backlight();
+    lcd.clear();
+    
+    // Выводим тестовые сообщения
+    lcd.setCursor(0, 0);
+    lcd.print("SoftWire LCD Test");
+    lcd.setCursor(0, 1);
+    lcd.print("SDA:A1 SCL:A2");
+    lcd.setCursor(0, 2);
+    lcd.print("Address: 0x27");
+    lcd.setCursor(0, 3);
+    lcd.print("Software I2C OK!");
+    
+  } else {
+    Serial.println(" - LCD NOT FOUND!");
+    Serial.println("Check wiring and address");
+  }
 }
 
 void loop()
 {
+  // Мигаем текстом для демонстрации работы
+  static unsigned long lastToggle = 0;
+  static bool backlightState = true;
+  
+  if (millis() - lastToggle > 1000) {
+    if (backlightState) {
+      lcd.noBacklight();
+    } else {
+      lcd.backlight();
+    }
+    backlightState = !backlightState;
+    lastToggle = millis();
+  }
 }
