@@ -1,6 +1,7 @@
 #ifndef DISPLAY_HANDLER_H
 #define DISPLAY_HANDLER_H
 
+#include <Arduino.h>
 #include <SoftWire.h>
 #include <LiquidCrystal_I2C.h>
 #include "config.h"
@@ -15,6 +16,7 @@ public:
     void begin();
     void displayWeights(float weight1, float weight2);
     void displayAngle(float angle);
+    void displayNoMagnet();
     void displayMessage(const String& line1, const String& line2 = ""); // осторожно, ссылка!
     void clear();
 };

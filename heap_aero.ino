@@ -1,14 +1,15 @@
-#include "config.h" // содержание
-#include "WeightSensor.h" // см. файл 2LCmesure.ino
-#include "StepperController.h" // Steper_with_limit.ino
-#include "AngleSensor.h" // магнитный датчик
-#include "DisplayHandler.h" // экран
-#include "CommandParser.h" // связатор-объединятор
+#include "config.h"
+#include "WeightSensor.h"
+#include "StepperController.h"
+#include "AngleSensor.h"
+#include "DisplayHandler.h"
+#include "CommandParser.h"
 
 // Переменные для хранения данных
 float weight1 = 0, weight2 = 0;
-float angle = 0; // угол
+float angle = 0;
 unsigned long lastMeasurementTime = 0;
+unsigned long lastDisplayUpdate = 0;  // ← ДОБАВИТЬ
 
 void setup() {
     Serial.begin(SERIAL_BAUD_RATE);
@@ -21,8 +22,6 @@ void setup() {
     
     Serial.println("=== INTEGRATED SYSTEM READY ===");
     commandParser.printHelp();
-    
-    displayHandler.displayMessage("System Ready", "Waiting...");
 }
 
 void loop() {
@@ -32,25 +31,34 @@ void loop() {
         commandParser.handleCommand(command);
     }
     
-    // Измерение весов
+    // Измерение весов для Serial
     if (commandParser.isMeasuring() && 
         millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
         weightSensor.takeMeasurement();
         lastMeasurementTime = millis();
     }
     
-    // Чтение данных для дисплея
-    weightSensor.readValues(weight1, weight2);
-    angle = angleSensor.getAngle();
-    
-    // Обновление дисплея
-    displayHandler.displayWeights(weight1, weight2);
-    if (angle >= 0) {
-        displayHandler.displayAngle(angle);
+    // Обновление дисплея каждые 500мс (не каждый цикл!)
+    if (millis() - lastDisplayUpdate >= 500) {
+        // Чтение данных
+        weightSensor.readValues(weight1, weight2);
+        angle = angleSensor.getAngle();
+        
+        // Обновляем ВЕСА (первая строка)
+        displayHandler.displayWeights(weight1, weight2);
+        
+        // Обновляем УГОЛ или сообщение (вторая строка)
+        if (angle >= 0) {
+            displayHandler.displayAngle(angle);
+        } else {
+            displayHandler.displayNoMagnet();
+        }
+        
+        lastDisplayUpdate = millis();
     }
     
     // Управление степпером
     stepperController.run();
     
-    //delay(100);
+    delay(100);
 }
