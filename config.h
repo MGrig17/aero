@@ -22,7 +22,7 @@ const int LCD_SCL_PIN = A2;
 const int MAX_VIRTUAL_POSITION = 360;
 const unsigned long MEASUREMENT_INTERVAL = 3000;
 const int SERIAL_BAUD_RATE = 115200;
-const int LCD_I2C_ADDRESS = 0x27;
+const int LCD_I2C_ADDRESS = 0x3F;
 
 // Калибровочные коэффициенты по умолчанию
 extern float CALIBRATION_FACTOR_1;
