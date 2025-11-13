@@ -2,13 +2,11 @@
 #define DISPLAY_HANDLER_H
 
 #include <Arduino.h>
-#include <SoftWire.h>
 #include <LiquidCrystal_I2C.h>
 #include "config.h"
 
 class DisplayHandler {
 private:
-    SoftWire softI2C;
     LiquidCrystal_I2C lcd;
     
 public:
@@ -17,7 +15,6 @@ public:
     void displayWeights(float weight1, float weight2);
     void displayAngle(float angle);
     void displayNoMagnet();
-    void displayMessage(const String& line1, const String& line2 = ""); // осторожно, ссылка!
     void clear();
 };
 

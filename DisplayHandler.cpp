@@ -1,68 +1,47 @@
-#include "DisplayHandler.h"
+  #include "DisplayHandler.h"
+
+// диспетчер команд.
 
 DisplayHandler displayHandler;
 
 DisplayHandler::DisplayHandler() 
-    : softI2C(SoftWire(LCD_SDA_PIN, LCD_SCL_PIN)),
-      lcd(LiquidCrystal_I2C(LCD_I2C_ADDRESS, 16, 2)) {
+    : lcd(LiquidCrystal_I2C(LCD_I2C_ADDRESS, 16, 2)) {  // Прямая инициализация
 }
 
 void DisplayHandler::begin() {
-    softI2C.begin();
-    softI2C.setTimeout(1000);
-    
+   
     lcd.init();
     lcd.backlight();
-    
-    // Тестовое сообщение для проверки LCD
+
+    // Тестовое сообщение (как в SerialDisplay.ino)
     lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("LCD TEST LINE 1");
-    lcd.setCursor(0, 1);
-    lcd.print("LCD TEST LINE 2");
-    delay(3000);
+    lcd.print("Angle: ");  // ← Точная копия из SerialDisplay.ino
     
-    lcd.clear();
-    displayMessage("System Ready", "Waiting...");
+    delay(1000);  // Короткая задержка вместо 3000ms
 }
 
 void DisplayHandler::displayWeights(float weight1, float weight2) {
-    // НЕ очищаем экран! Только обновляем веса
-    lcd.setCursor(0, 0);
+    // ВТОРАЯ строка для весов
+    lcd.setCursor(0, 1);
     lcd.print("1:");
     lcd.print(weight1, 1);
-    lcd.print("g   ");
-    
-    lcd.setCursor(8, 0);
-    lcd.print("2:");
+    lcd.print(" 2:");
     lcd.print(weight2, 1);
-    lcd.print("g   ");
+    lcd.print("   ");
 }
 
 void DisplayHandler::displayAngle(float angle) {
-    // Выводим угол на второй строке
-    lcd.setCursor(0, 1);
-    lcd.print("Angle:");
+    // Первая строка для угла (как в SerialDisplay.ino)
+    lcd.setCursor(7, 0);  // ← Точная копия из SerialDisplay.ino
     lcd.print(angle, 1);
-    lcd.print((char)223);
-    lcd.print("    "); // Очищаем остаток строки
+    lcd.print((char)223);  // Символ градуса
+    lcd.print("   ");      // Очистка хвоста
 }
 
 void DisplayHandler::displayNoMagnet() {
     // Сообщение об отсутствии магнита
     lcd.setCursor(0, 1);
     lcd.print("No Magnet!    ");
-}
-
-void DisplayHandler::displayMessage(const String& line1, const String& line2) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(line1);
-    
-    if (line2.length() > 0) {
-        lcd.setCursor(0, 1);
-        lcd.print(line2);
-    }
 }
 
 void DisplayHandler::clear() {

@@ -7,13 +7,13 @@
 class WeightSensor {
 private:
     HX711 scale1, scale2;
-    float calFactor1, calFactor2;
+    // float calFactor1, calFactor2;
     
 public:
     WeightSensor();
     void begin();
     void tare();
-    void setCalibrationFactor(int sensorNum, float factor);
+    // void setCalibrationFactor(int sensorNum, float factor);
     void readValues(float& value1, float& value2); // осторожно, ссылка!
     void takeMeasurement();
 };

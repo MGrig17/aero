@@ -2,76 +2,66 @@
 
 StepperController stepperController;
 
-StepperController::StepperController() 
-    : stepper(AccelStepper(1, STEPPER_STEP_PIN, STEPPER_DIR_PIN)),
-      isHomed(false) {
+StepperController::StepperController() : isHomed(false) {
 }
 
 void StepperController::begin() {
     pinMode(STEPPER_ENDSTOP_PIN, INPUT_PULLUP);
-    stepper.setMaxSpeed(2000);
-    stepper.setAcceleration(1000);
+    pinMode(STEPPER_STEP_PIN, OUTPUT);
+    pinMode(STEPPER_DIR_PIN, OUTPUT);
+    pinMode(TMC_ENABLE_PIN, OUTPUT);
+    
+    digitalWrite(TMC_ENABLE_PIN, LOW);  // Включить драйвер
     home();
 }
 
+// поиск "нуля"
 void StepperController::home() {
     Serial.println("Homing...");
     
-    // Движение к концевику (как раньше)
-    stepper.setSpeed(200);
+    // Движение к концевику
+    digitalWrite(STEPPER_DIR_PIN, LOW);
     while(digitalRead(STEPPER_ENDSTOP_PIN) != HIGH) {
-        stepper.runSpeed();
+        digitalWrite(STEPPER_STEP_PIN, HIGH);
+        delayMicroseconds(2000);
+        digitalWrite(STEPPER_STEP_PIN, LOW);
+        delayMicroseconds(2000);
     }
-    
-    stepper.stop();
-    delay(100);
-    stepper.setCurrentPosition(0);
-    isHomed = true;
     
     // Отъезд от концевика
-    stepper.moveTo(-100);
-    while(stepper.distanceToGo() != 0) {
-        stepper.run();
+    digitalWrite(STEPPER_DIR_PIN, HIGH);
+    for(int i = 0; i < 100; i++) {
+        digitalWrite(STEPPER_STEP_PIN, HIGH);
+        delayMicroseconds(2000);
+        digitalWrite(STEPPER_STEP_PIN, LOW);
+        delayMicroseconds(2000);
     }
     
+    isHomed = true;
     Serial.println("Homing complete!");
 }
 
+// отход на фиксированное количество шагов
 void StepperController::moveSteps(int steps) {
     if (!isHomed) {
         Serial.println("Error: Stepper not homed!");
         return;
     }
     
-    // СНИМАЕМ ФИКСАЦИЮ - включаем управление
-    stepper.setSpeed(0);  // Сброс скорости
-    stepper.enableOutputs(); // Включить выходы драйвера
-    
     Serial.print("Moving ");
     Serial.print(steps);
     Serial.println(" steps");
     
-    stepper.setSpeed(steps > 0 ? 500 : -500);
-    int stepsToGo = abs(steps);
+    // Установка направления
+    digitalWrite(STEPPER_DIR_PIN, steps > 0 ? HIGH : LOW);
     
-    while(stepsToGo > 0) {
-        stepper.runSpeed();
-        stepsToGo--;
-        delay(1);
+    // Выполнение шагов (взят код из tmc-driver.ino)
+    for (int i = 0; i < abs(steps); i++) {
+        digitalWrite(STEPPER_STEP_PIN, HIGH);
+        delayMicroseconds(2000);
+        digitalWrite(STEPPER_STEP_PIN, LOW);
+        delayMicroseconds(2000);
     }
-    stepper.stop();
-    
-    // ОПЯТЬ ФИКСИРУЕМ после движения
-    stepper.setCurrentPosition(0); // Сброс позиции если нужно
     
     Serial.println("Move complete!");
-}
-
-void StepperController::printStatus() {
-    Serial.print("Current position: ");
-    Serial.println(stepper.currentPosition());
-}
-
-void StepperController::run() {
-    // Пустая - используем только прямое управление из moveSteps
 }

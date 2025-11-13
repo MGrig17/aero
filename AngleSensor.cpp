@@ -2,7 +2,7 @@
 
 AngleSensor angleSensor;
 
-AngleSensor::AngleSensor() : magnetDetected(false) {
+AngleSensor::AngleSensor() : magnetDetected(false), angleOffset(0) {
 }
 
 void AngleSensor::begin() {
@@ -15,25 +15,24 @@ void AngleSensor::begin() {
     }
     
     magnetDetected = true;
-    Serial.print("Magnet detected. Current Magnitude: ");
-    Serial.println(ams5600.getMagnitude());
+    
+    // КАЛИБРОВКА НУЛЯ (из SerialDisplay.ino)
+    angleOffset = getRawAngle();
+    Serial.print("Angle calibrated. Offset: ");
+    Serial.println(angleOffset);
+}
+
+// Конвертация в градусы
+float AngleSensor::getRawAngle() {
+    return ams5600.getRawAngle() * 0.087890625; 
 }
 
 float AngleSensor::getAngle() {
     if (!magnetDetected) return -1.0;
     
-    word rawAngle = ams5600.getRawAngle();
-    float angle = rawAngle * 0.087890625; // Конвертация в градусы
-    
-    // Отладочный вывод
-    Serial.print("Raw angle: ");
-    Serial.print(rawAngle);
-    Serial.print(", Converted angle: ");
-    Serial.println(angle);
+    // КАЛИБРОВАННЫЙ УГОЛ (из SerialDisplay.ino)
+    float angle = getRawAngle() - angleOffset;
+    if (angle < 0) angle = -angle; // Абсолютное значение
     
     return angle;
-}
-
-bool AngleSensor::isMagnetDetected() {
-    return magnetDetected;
 }
