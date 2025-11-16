@@ -28,7 +28,7 @@ float AngleSensor::getRawAngle() {
 }
 
 float AngleSensor::getAngle() {
-    if (!magnetDetected) return -1.0;
+    if (!magnetDetected) return -1.0; //??
     
     // КАЛИБРОВАННЫЙ УГОЛ (из SerialDisplay.ino)
     float angle = getRawAngle() - angleOffset;

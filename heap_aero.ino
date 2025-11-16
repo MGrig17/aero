@@ -1,3 +1,29 @@
+#include "config.h"
+#include "WeightSensor.h"
+#include "StepperController.h"
+#include "AngleSensor.h"
+#include "DisplayHandler.h"
+#include "CommandParser.h"
+
+// Переменные для хранения данных - ДОБАВИТЬ В НАЧАЛО
+float weight1 = 0, weight2 = 0;
+float angle = 0;
+unsigned long lastMeasurementTime = 0;
+unsigned long lastDisplayUpdate = 0;
+
+void setup() {
+    Serial.begin(SERIAL_BAUD_RATE);
+    
+    // Инициализация всех модулей
+    displayHandler.begin();
+    weightSensor.begin();
+    stepperController.begin();
+    angleSensor.begin();
+    
+    Serial.println("=== INTEGRATED SYSTEM READY ===");
+    commandParser.printHelp();
+}
+
 void loop() {
     // Обработка команд
     if (Serial.available() > 0) {
@@ -13,7 +39,7 @@ void loop() {
     }
     
     // ОБНОВЛЕНИЕ ДИСПЛЕЯ (как в SerialDisplay.ino)
-    static unsigned long lastDisplayUpdate = 0;
+    //static unsigned long lastDisplayUpdate = 0;
     if (millis() - lastDisplayUpdate >= 100) {
         float angle = angleSensor.getAngle();
         

@@ -10,13 +10,15 @@ private:
     AMS_5600 ams5600;
     bool magnetDetected;
     float angleOffset;  // смещение
+    float getRawAngle();
     
 public:
     AngleSensor();
     void begin();
     float getAngle();
     bool isMagnetDetected();
-    float getCalibratedAngle();  // ← ДОБАВИТЬ калиброванный угол
+    //float getCalibratedAngle();  // ← ДОБАВИТЬ калиброванный угол
+    bool isMagnetDetected() { return magnetDetected; }
 };
 
 extern AngleSensor angleSensor;

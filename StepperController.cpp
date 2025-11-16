@@ -65,3 +65,11 @@ void StepperController::moveSteps(int steps) {
     
     Serial.println("Move complete!");
 }
+
+void StepperController::printStatus() {
+    Serial.println("Stepper status: Homed");
+}
+
+void StepperController::run() {
+    // Пустая функция, но должна быть объявлена
+}

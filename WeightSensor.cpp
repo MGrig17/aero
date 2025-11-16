@@ -25,16 +25,16 @@ void WeightSensor::tare() {
     scale2.tare();
 }
 
-//// типо "калибровка"
-//void WeightSensor::setCalibrationFactor(int sensorNum, float factor) {
-//    if (sensorNum == 1) {
-//        calFactor1 = factor;
-//        scale1.set_scale(calFactor1);
-//    } else {
-//        calFactor2 = factor;
-//        scale2.set_scale(calFactor2);
-//    }
-//}
+// типо "калибровка"
+void WeightSensor::setCalibrationFactor(int sensorNum, float factor) {
+   if (sensorNum == 1) {
+       calFactor1 = factor;
+       scale1.set_scale(calFactor1);
+   } else {
+       calFactor2 = factor;
+       scale2.set_scale(calFactor2);
+   }
+}
 
 // чтение данных с ТД
 void WeightSensor::readValues(float& value1, float& value2) {

@@ -2,12 +2,12 @@
 #define STEPPER_CONTROLLER_H
 
 #include <Arduino.h>
-#include "AccelStepper.h"
+//#include "AccelStepper.h"
 #include "config.h"
 
 class StepperController {
 private:
-    AccelStepper stepper;
+    // AccelStepper stepper;
     bool isHomed;
     
 public:

@@ -12,12 +12,10 @@ void DisplayHandler::begin() {
    
     lcd.init();
     lcd.backlight();
-
-    // Тестовое сообщение (как в SerialDisplay.ino)
     lcd.clear();
-    lcd.print("Angle: ");  // ← Точная копия из SerialDisplay.ino
+    lcd.print("Angle: "); 
     
-    delay(1000);  // Короткая задержка вместо 3000ms
+    delay(1000);  
 }
 
 void DisplayHandler::displayWeights(float weight1, float weight2) {
@@ -31,11 +29,11 @@ void DisplayHandler::displayWeights(float weight1, float weight2) {
 }
 
 void DisplayHandler::displayAngle(float angle) {
-    // Первая строка для угла (как в SerialDisplay.ino)
-    lcd.setCursor(7, 0);  // ← Точная копия из SerialDisplay.ino
+    // Первая строка для угла 
+    lcd.setCursor(7, 0);  
     lcd.print(angle, 1);
-    lcd.print((char)223);  // Символ градуса
-    lcd.print("   ");      // Очистка хвоста
+    lcd.print((char)223); 
+    lcd.print("   ");     
 }
 
 void DisplayHandler::displayNoMagnet() {
