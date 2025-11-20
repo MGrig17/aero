@@ -45,6 +45,7 @@ void WeightSensor::readValues(float& value1, float& value2) {
     if (abs(value2) < 0.5) value2 = 0;
 }
 
+// Измерение
 void WeightSensor::takeMeasurement() {
     float weight1 = scale1.get_units(5);
     float weight2 = scale2.get_units(5);

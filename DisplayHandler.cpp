@@ -1,5 +1,5 @@
   #include "DisplayHandler.h"
-
+//   #include <LiquidCrystal_I2C.h> -- уже есть в "DisplayHandler.h"
 // диспетчер команд.
 
 DisplayHandler displayHandler;
@@ -9,13 +9,11 @@ DisplayHandler::DisplayHandler()
 }
 
 void DisplayHandler::begin() {
-   
+    Wire.begin();
     lcd.init();
     lcd.backlight();
     lcd.clear();
     lcd.print("Angle: "); 
-    
-    delay(1000);  
 }
 
 void DisplayHandler::displayWeights(float weight1, float weight2) {
@@ -41,7 +39,7 @@ void DisplayHandler::displayNoMagnet() {
     lcd.setCursor(0, 1);
     lcd.print("No Magnet!    ");
 }
-
+// очистка дисплея
 void DisplayHandler::clear() {
     lcd.clear();
 }
