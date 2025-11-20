@@ -1,10 +1,28 @@
 Прогресс(регресс, лол):
 
 ПРи запуске кода:
-Мотор начинает homing, при нажатии на концевик его заканчивает. 
-
-Homing...
+UPD^^ 
+DEBUG: StepperController::begin() called
 Homing...
 Homing complete!
+DEBUG: StepperController::begin() finished
+=== INTEGRATED SYSTEM READY ===
 
-Больше ничего :(
+=== HELP ===
+start       - start weight measurements
+stop        - stop measurements
+tare        - reset tare for sensors
+status      - show stepper status
+home        - home stepper
+N           - move N steps (positive/negative)
+help        - show this help
+==================
+Stepper status: Homed
+=== MEASUREMENTS STARTED ===
+24560	-0.33		0.00
+28274	-0.28		0.00
+31978	-0.31		0.00
+35687	-0.31		0.00
+=== MEASUREMENTS STOPPED ===
+Moving 1000 steps
+Move complete!
