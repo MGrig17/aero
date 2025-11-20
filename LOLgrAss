@@ -1,35 +1,44 @@
 Прогресс(регресс, лол):
 
 ПРи запуске кода:
-UPD^^ Очепятки где-то в коде, связанном с датчиком угла. Какие-то значения даже на lcd выводятся, хз что-там, но что-то явно есть.
-Воооть вывод:
-
-DEBUG: StepperController::begin() called
+UPD^^ -- все работает
+=== I2C SCANNER ===
+I2C device found at 0x36
+I2C device found at 0x3F
+=== SCAN COMPLETE ===
 Homing...
 Homing complete!
-DEBUG: StepperController::begin() finished
+Before angle sensor...
+Angle calibrated. Offset: 55.99
+After angle sensor...
 === INTEGRATED SYSTEM READY ===
 
 === HELP ===
 start       - start weight measurements
 stop        - stop measurements
 tare        - reset tare for sensors
+angle       - read current angle
 status      - show stepper status
 home        - home stepper
 N           - move N steps (positive/negative)
 help        - show this help
 ==================
-Stepper status: Homed
 === MEASUREMENTS STARTED ===
-24560	-0.33		0.00
-28274	-0.28		0.00
-31978	-0.31		0.00
-35687	-0.31		0.00
+33403	0.08		0.00
+37306	0.06		0.00
+40721	0.33		0.00
+45172	109.16		0.00
+48972	-0.22		0.00
+52681	0.07		0.00
+56113	0.19		0.00
+59548	0.27		0.00
 === MEASUREMENTS STOPPED ===
+Tare reset!
+Current angle: 0.0°
+Current angle: 38.5°
+Stepper status: Homed
 Moving 1000 steps
 Move complete!
-
-
-ТАК.
-Судя по всему -- путаница с A4-A5. Если белый провод -- A5, то не работает магнитный датчик(и остальным, если не закомментить, не дает). Но зато -- выводятся данные с ТД на lcd.
-И наоборот, если поменять A4-A5 местами, то работает магнитный датчик(в serial данные идут), но не реагирует lcd
+Stepper status: Homed
+Moving -1000 steps
+Move complete!
