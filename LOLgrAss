@@ -1,7 +1,9 @@
 Прогресс(регресс, лол):
 
 ПРи запуске кода:
-UPD^^ 
+UPD^^ Очепятки где-то в коде, связанном с датчиком угла. Какие-то значения даже на lcd выводятся, хз что-там, но что-то явно есть.
+Воооть вывод:
+
 DEBUG: StepperController::begin() called
 Homing...
 Homing complete!
@@ -26,3 +28,5 @@ Stepper status: Homed
 === MEASUREMENTS STOPPED ===
 Moving 1000 steps
 Move complete!
+
+
