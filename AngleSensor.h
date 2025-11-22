@@ -18,7 +18,7 @@ public:
     void printAngle();
     float getAngle();
     bool isMagnetDetected();
-    //float getCalibratedAngle(); 
+    void resetAngle();
 };
 
 extern AngleSensor angleSensor;

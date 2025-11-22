@@ -7,7 +7,9 @@
 
 class DisplayHandler {
 private:
-    LiquidCrystal_I2C lcd;
+    // LiquidCrystal_I2C lcd;
+    LiquidCrystal_I2C lcdWeights;  // Для весов 0x3F
+    LiquidCrystal_I2C lcdAngle;    // Для угла 0x27
     
 public:
     DisplayHandler();

@@ -27,17 +27,22 @@ void StepperController::home() {
         digitalWrite(STEPPER_STEP_PIN, LOW);
         delayMicroseconds(2000);
     }
+
+    totalSteps = 0; // СБРОС СЧЕТЧИКА ПРИ homing
     
     // Отъезд от концевика
     digitalWrite(STEPPER_DIR_PIN, HIGH);
-    for(int i = 0; i < 100; i++) {
+    for(int i = 0; i < horisontPos; i++) {
         digitalWrite(STEPPER_STEP_PIN, HIGH);
         delayMicroseconds(2000);
         digitalWrite(STEPPER_STEP_PIN, LOW);
         delayMicroseconds(2000);
     }
     
+    totalSteps += 100; // УЧЕСТЬ ШАГИ ОТЪЕЗДА
+    
     isHomed = true;
+    angleSensor.resetAngle();
     Serial.println("Homing complete!");
 }
 
@@ -47,6 +52,8 @@ void StepperController::moveSteps(int steps) {
         Serial.println("Error: Stepper not homed!");
         return;
     }
+    
+    totalSteps += steps; // ОБНОВЛЯЕМ СЧЕТЧИК
     
     Serial.print("Moving ");
     Serial.print(steps);
@@ -67,7 +74,8 @@ void StepperController::moveSteps(int steps) {
 }
 
 void StepperController::printStatus() {
-    Serial.println("Stepper status: Homed");
+    Serial.print("Stepper status: Homed, Total steps: ");
+    Serial.println(totalSteps);
 }
 
 void StepperController::run() {

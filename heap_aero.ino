@@ -25,7 +25,6 @@ void setup() {
 
     delay(2000);  // Важно: дать время на открытие Serial Monitor
     
-// Тк шляпа с датчиком угла -- тестим.
 
 //========DEBUG START=========
 
@@ -78,30 +77,43 @@ void loop() {
         lastMeasurementTime = millis();
     }
     
-    // ОБНОВЛЕНИЕ ДИСПЛЕЯ (как в SerialDisplay.ino)
-    //static unsigned long lastDisplayUpdate = 0;
-    if (millis() - lastDisplayUpdate >= 100) {
+    // НЕПРЕРЫВНЫЕ ИЗМЕРЕНИЯ В ФОРМАТЕ Angle+Weights
+    if (commandParser.isContinuousMeasure() && 
+        millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
+        
+        float angle = angleSensor.getAngle();
+        float weight1, weight2;
+        weightSensor.readValues(weight1, weight2);
+        
+        // Вывод в формате таблицы
+        Serial.print(angle, 1);
+        Serial.print("°\t\t");
+        Serial.print(weight1, 2);
+        Serial.print("g\t\t");
+        Serial.print(weight2, 2);
+        Serial.println("g");
+        
+        lastMeasurementTime = millis();
+    }
+
+    // ОБНОВЛЕНИЕ ДИСПЛЕЕВ
+    if (millis() - lastDisplayUpdate >= 500) {
         float angle = angleSensor.getAngle();
         
-        // ВЫВОД УГЛА (первая строка) - как в SerialDisplay.ino
+        // ВЫВОД УГЛА на отдельный дисплей (0x27)
         if (angle >= 0) {
             displayHandler.displayAngle(angle);
         } else {
             displayHandler.displayNoMagnet();
         }
         
-        // ВЫВОД ВЕСОВ (вторая строка)
+        // ВЫВОД ВЕСОВ на отдельный дисплей (0x3F)
         weightSensor.readValues(weight1, weight2);
         displayHandler.displayWeights(weight1, weight2);
         
-        // // НЕПРЕРЫВНЫЙ ВЫВОД ПОКАЗАНИЙ МАГНИТНОГО ДАТЧИКА В SERIAL (как в SerialDisplay.ino) -- по сути для отладки
-        // if (angle >= 0) {
-        //     Serial.println(angle);
-        // }
-        
         lastDisplayUpdate = millis();
     }
-    
+   
     stepperController.run();
-    delay(50);
+    delay(10); // если ставить больше, чем 10 -- help перестает реагировать на команды ._.
 }

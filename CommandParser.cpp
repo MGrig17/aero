@@ -14,10 +14,12 @@ void CommandParser::handleCommand(const String& command) {
     
     if (cmd == "start") {
         measuring = true;
+        continuousMeasure = false;
         Serial.println("=== MEASUREMENTS STARTED ===");
     } 
     else if (cmd == "stop") {
         measuring = false;
+        continuousMeasure = false;
         Serial.println("=== MEASUREMENTS STOPPED ===");
     } 
     else if (cmd == "tare") {
@@ -45,6 +47,25 @@ void CommandParser::handleCommand(const String& command) {
     else if (cmd == "angle") {  
         angleSensor.printAngle();
     } 
+    else if (cmd == "measure") {  // ← ДОБАВИТЬ ЭТУ КОМАНДУ
+        // Получаем данные
+        float angle = angleSensor.getAngle();
+        float weight1, weight2;
+        weightSensor.readValues(weight1, weight2);
+
+        continuousMeasure = true;   
+        measuring = false;
+        Serial.println("=== CONTINUOUS MEASUREMENTS STARTED ===");
+        // Вывод в формате таблицы
+        Serial.println("Angle\t\t1TD\t\t2TD");
+        Serial.print(angle, 1);
+        Serial.print("°\t\t");
+        Serial.print(weight1, 2);
+        Serial.print("g\t\t");
+        Serial.print(weight2, 2);
+        Serial.println("g");
+    }
+
     else if (cmd == "help") {
         printHelp();
     } 
@@ -63,10 +84,10 @@ void CommandParser::printHelp() {
     Serial.println("start       - start weight measurements");
     Serial.println("stop        - stop measurements");
     Serial.println("tare        - reset tare for sensors");
-    // Serial.println("factor1 X   - set calibration factor 1");
-    // Serial.println("factor2 X   - set calibration factor 2");
     Serial.println("angle       - read current angle");
-    Serial.println("status      - show stepper status");
+    Serial.println("measure     - read angle + weights"); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    Serial.println("status      - show stepper status + total steps");
+    Serial.println("steps       - show total steps from home");
     Serial.println("home        - home stepper");
     Serial.println("N           - move N steps (positive/negative)");
     Serial.println("help        - show this help");
