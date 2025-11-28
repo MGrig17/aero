@@ -10,14 +10,15 @@ private:
     // LiquidCrystal_I2C lcd;
     LiquidCrystal_I2C lcdWeights;  // Для весов 0x3F
     LiquidCrystal_I2C lcdAngle;    // Для угла 0x27
-    
+    void clear(); // очистка дисплеев
+
 public:
     DisplayHandler();
     void begin();
     void displayWeights(float weight1, float weight2);
     void displayAngle(float angle);
     void displayNoMagnet();
-    void clear();
+    void displayMessage(const String& line1, const String& line2);
 };
 
 extern DisplayHandler displayHandler;

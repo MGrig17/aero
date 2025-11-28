@@ -39,7 +39,7 @@ void StepperController::home() {
         delayMicroseconds(2000);
     }
     
-    totalSteps += 100; // УЧЕСТЬ ШАГИ ОТЪЕЗДА
+    totalSteps += horisontPos; // УЧЕСТЬ ШАГИ ОТЪЕЗДА
     
     isHomed = true;
     angleSensor.resetAngle();
@@ -55,9 +55,9 @@ void StepperController::moveSteps(int steps) {
     
     totalSteps += steps; // ОБНОВЛЯЕМ СЧЕТЧИК
     
-    Serial.print("Moving ");
-    Serial.print(steps);
-    Serial.println(" steps");
+    // Serial.print("Moving ");
+    // Serial.print(steps);
+    // Serial.println(" steps");
     
     // Установка направления
     digitalWrite(STEPPER_DIR_PIN, steps > 0 ? HIGH : LOW);
@@ -70,7 +70,7 @@ void StepperController::moveSteps(int steps) {
         delayMicroseconds(2000);
     }
     
-    Serial.println("Move complete!");
+    //Serial.println("Move complete!");
 }
 
 void StepperController::printStatus() {

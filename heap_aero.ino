@@ -1,10 +1,8 @@
 /*
 Ахтунг! 
 Перед запуском:
-    1. Проверь схему, все ли туда воткнуто.
+    1. Проверь схему, все ли туда воткнуто. Особенно касается магнитного датчика
     2. Перепиши пины в config.h
-
-
 */
 
 
@@ -14,11 +12,14 @@
 #include "AngleSensor.h"
 #include "DisplayHandler.h"
 #include "CommandParser.h"
+#include "Potentiometer.h"
 
 float weight1 = 0, weight2 = 0;
 float angle = 0;
 unsigned long lastMeasurementTime = 0;
 unsigned long lastDisplayUpdate = 0;
+unsigned long lastStepTime = 0;
+Potentiometer pot(POT_PIN);
 
 void setup() {
     Serial.begin(SERIAL_BAUD_RATE);
@@ -26,7 +27,7 @@ void setup() {
     delay(2000);  // Важно: дать время на открытие Serial Monitor
     
 
-//========DEBUG START=========
+//========DEBUG START=========(проверка подключения 2х экранов и магнитного датчика)
 
  // Сначала I2C сканер
     Serial.println("=== I2C SCANNER ===");
@@ -50,67 +51,128 @@ void setup() {
 //========DEBUG END=========
 
     // Инициализация всех модулей
+    Serial.println(F("Initializing displayHandler..."));
     displayHandler.begin();
+    Serial.println(F("DisplayHandler initialized!"));
+    Serial.println(F("Initializing weightSensor..."));
     weightSensor.begin();
+    Serial.println(F("WeightSensor initialized!"));
+    Serial.println(F("Initializing stepperController..."));
     stepperController.begin();
-
-    Serial.println("Before angle sensor...");
+    Serial.println(F("StepperController initialized!"));
+    Serial.println(F("Before angle sensor..."));
     angleSensor.begin(); // ← Если зависнет здесь, будем знать
-    Serial.println("After angle sensor...");
-    
-    Serial.println("=== INTEGRATED SYSTEM READY ===");
+    Serial.println(F("After angle sensor..."));
+    Serial.println(F("Initializing potentiometer..."));
+    pot.begin();
+    Serial.println(F("Potentiometer initialized!"));
+
+    Serial.println(F("=== INTEGRATED SYSTEM READY ==="));
     commandParser.printHelp();
 }
 
 void loop() {
 
-    // Обработка команд
+    // Обработка команд (всегда активна)
     if (Serial.available() > 0) {
         String command = Serial.readStringUntil('\n');
-        commandParser.handleCommand(command);
-    }
-    
-    // Измерение весов для Serial
-    if (commandParser.isMeasuring() && 
-        millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
-        weightSensor.takeMeasurement();
-        lastMeasurementTime = millis();
-    }
-    
-    // НЕПРЕРЫВНЫЕ ИЗМЕРЕНИЯ В ФОРМАТЕ Angle+Weights
-    if (commandParser.isContinuousMeasure() && 
-        millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
-        
-        float angle = angleSensor.getAngle();
-        float weight1, weight2;
-        weightSensor.readValues(weight1, weight2);
-        
-        // Вывод в формате таблицы
-        Serial.print(angle, 1);
-        Serial.print("°\t\t");
-        Serial.print(weight1, 2);
-        Serial.print("g\t\t");
-        Serial.print(weight2, 2);
-        Serial.println("g");
-        
-        lastMeasurementTime = millis();
+        commandParser.handleCommand(command, pot);
     }
 
-    // ОБНОВЛЕНИЕ ДИСПЛЕЕВ
-    if (millis() - lastDisplayUpdate >= 500) {
-        float angle = angleSensor.getAngle();
+    // Автоматическое управление от потенциометра (ТОЛЬКО в режиме pot)
+    if (commandParser.isPotMode()) {
+        // Прямое преобразование вместо calculateDelta()
+        int targetSteps = map(pot.readRaw(), 0, 1023, -590, 410); // не от 0 до 1000 
+        int currentSteps = pot.getPosition();
+        int delta = targetSteps - currentSteps;
+    
+        if (abs(delta) > 2) {
+            // int moveSteps = constrain(delta, -50, 50); // ограничение скорости
+            stepperController.moveSteps(delta);
+            pot.setPosition(targetSteps); // точная установка позиции
+        }
+    }
+ 
+    // ИЗМЕРЕНИЯ ТОЛЬКО В АВТО-РЕЖИМЕ
+      
+        // НЕПРЕРЫВНЫЕ ИЗМЕРЕНИЯ В ФОРМАТЕ Angle+Weights
+        if (commandParser.isContinuousMeasure() && 
+            millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
         
-        // ВЫВОД УГЛА на отдельный дисплей (0x27)
-        if (angle >= 0) {
-            displayHandler.displayAngle(angle);
+            float angle = angleSensor.getAngle();
+            float weight1, weight2;
+            weightSensor.readValues(weight1, weight2);
+        
+            // Вывод в формате таблицы
+            Serial.print(angle, 1);
+            Serial.print(F("°\t\t"));
+            Serial.print(weight1, 2);
+            Serial.print(F("g\t\t"));
+            Serial.print(weight2, 2);
+            Serial.println(F("g"));
+        
+            lastMeasurementTime = millis();
+        }
+    
+    // ↓↓↓ БЛОК ДЛЯ АВТО-ИЗМЕРЕНИЙ ↓↓↓
+    if (commandParser.isAutoMeasure()) {
+        unsigned long currentTime = millis();
+        
+        // Проверяем интервал (3 секунды)
+        if (currentTime - lastStepTime >= 3000) {
+            
+            // Получаем текущие данные
+            float currentAngle = angleSensor.getAngle();
+            float weight1, weight2;
+            weightSensor.readValues(weight1, weight2);
+            
+            // Выводим в Serial
+            Serial.print(currentTime / 1000);
+            Serial.print("s\t");
+            Serial.print(currentAngle, 1);
+            Serial.print("°\t\t");
+            Serial.print(weight1, 2);
+            Serial.print("g\t\t");
+            Serial.print(weight2, 2);
+            Serial.println("g");
+            
+            // Проверяем достижение конечного угла
+            float currentTarget = commandParser.getCurrentTargetAngle();
+            
+            if ((commandParser.getAngleStep() > 0 && currentTarget >= commandParser.getEndAngle()) ||
+                (commandParser.getAngleStep() < 0 && currentTarget <= commandParser.getEndAngle())) {
+                
+                // Достигли конечного угла - завершаем
+                Serial.println("=== AUTO MEASUREMENT COMPLETED ===");
+                commandParser.stopAutoMeasure();
+                
+            } else {
+                // Переходим к следующему углу
+                float nextTarget = currentTarget + commandParser.getAngleStep();
+                commandParser.setCurrentTargetAngle(nextTarget);
+                commandParser.moveToAngle(nextTarget);
+                lastStepTime = currentTime;
+            }
+        }
+    }
+
+    // ОБНОВЛЕНИЕ ДИСПЛЕЕВ (ВСЕГДА)
+    if (millis() - lastDisplayUpdate >= 500) {
+        // ПРОВЕРКА МАГНИТА:
+        if (angleSensor.isMagnetDetected()) {
+            float angle = angleSensor.getAngle();
+            displayHandler.displayAngle(angle);        
+            // Вывод в Serial (если нужно)
+            // Serial.print("Angle: ");
+            // Serial.println(angle);
         } else {
             displayHandler.displayNoMagnet();
         }
-        
+    
         // ВЫВОД ВЕСОВ на отдельный дисплей (0x3F)
         weightSensor.readValues(weight1, weight2);
         displayHandler.displayWeights(weight1, weight2);
-        
+    
         lastDisplayUpdate = millis();
     }
    

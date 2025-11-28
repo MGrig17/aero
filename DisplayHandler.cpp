@@ -59,7 +59,7 @@ void DisplayHandler::displayAngle(float angle) {
 
     // ТОЛЬКО на дисплей угла (0x27)
     lcdAngle.setCursor(7, 0);  // После "Angle: "
-    lcdAngle.print(angle, 1);
+    lcdAngle.print(-angle, 1); //////////////////////////////////////////////////////////////смена знака
     lcdAngle.print((char)223); 
     lcdAngle.print("   ");     
 }
@@ -69,7 +69,15 @@ void DisplayHandler::displayNoMagnet() {
     lcdAngle.setCursor(7, 0);
     lcdAngle.print("No Magnet!    ");
 }
-// очистка дисплея ??? не нужна?
+
+void DisplayHandler::displayMessage(const String& line1, const String& line2) {
+    clear(); // ← ИСПОЛЬЗУЕМ СУЩЕСТВУЮЩИЙ МЕТОД
+    lcdAngle.setCursor(0, 0);
+    lcdAngle.print(line1);
+    lcdAngle.setCursor(0, 1);
+    lcdAngle.print(line2);
+}
+// очистка дисплея 
 void DisplayHandler::clear() {
     lcdWeights.clear();
     lcdAngle.clear();
