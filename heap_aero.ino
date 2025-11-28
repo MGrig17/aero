@@ -5,7 +5,6 @@
     2. Перепиши пины в config.h
 */
 
-
 #include "config.h"
 #include "WeightSensor.h"
 #include "StepperController.h"
@@ -21,11 +20,15 @@ unsigned long lastDisplayUpdate = 0;
 unsigned long lastStepTime = 0;
 Potentiometer pot(POT_PIN);
 
+void pot_func();
+void handleContinuousMeasurements();
+void handleAutoMeasurements();
+void updateDisplays();
+
 void setup() {
     Serial.begin(SERIAL_BAUD_RATE);
 
-    delay(2000);  // Важно: дать время на открытие Serial Monitor
-    
+    delay(2000);  // Важно: дать время на открытие Serial Monitor    
 
 //========DEBUG START=========(проверка подключения 2х экранов и магнитного датчика)
 
@@ -66,7 +69,6 @@ void setup() {
     Serial.println(F("Initializing potentiometer..."));
     pot.begin();
     Serial.println(F("Potentiometer initialized!"));
-
     Serial.println(F("=== INTEGRATED SYSTEM READY ==="));
     commandParser.printHelp();
 }
@@ -77,9 +79,21 @@ void loop() {
     if (Serial.available() > 0) {
         String command = Serial.readStringUntil('\n');
         commandParser.handleCommand(command, pot);
-    }
+    } 
+    // ИЗМЕРЕНИЯ ТОЛЬКО В АВТО-РЕЖИМЕ 
+    pot_func(); // режим управления через потенциометр
+    handleContinuousMeasurements();  // НЕПРЕРЫВНЫЕ ИЗМЕРЕНИЯ В ФОРМАТЕ Angle+Weights    
+    handleAutoMeasurements();// ДЛЯ АВТО-ИЗМЕРЕНИЙ  
+    updateDisplays(); // ОБНОВЛЕНИЕ ДИСПЛЕЕВ (ВСЕГДА)
 
-    // Автоматическое управление от потенциометра (ТОЛЬКО в режиме pot)
+    stepperController.run();
+    delay(10); // если ставить больше, чем 10 -- help перестает реагировать на команды ._.
+}
+
+//==================================МЕТОДЫ===========================================
+
+// Автоматическое управление от потенциометра (ТОЛЬКО в режиме pot)
+void pot_func() {
     if (commandParser.isPotMode()) {
         // Прямое преобразование вместо calculateDelta()
         int targetSteps = map(pot.readRaw(), 0, 1023, -590, 410); // не от 0 до 1000 
@@ -92,29 +106,10 @@ void loop() {
             pot.setPosition(targetSteps); // точная установка позиции
         }
     }
- 
-    // ИЗМЕРЕНИЯ ТОЛЬКО В АВТО-РЕЖИМЕ
-      
-        // НЕПРЕРЫВНЫЕ ИЗМЕРЕНИЯ В ФОРМАТЕ Angle+Weights
-        if (commandParser.isContinuousMeasure() && 
-            millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
-        
-            float angle = angleSensor.getAngle();
-            float weight1, weight2;
-            weightSensor.readValues(weight1, weight2);
-        
-            // Вывод в формате таблицы
-            Serial.print(angle, 1);
-            Serial.print(F("°\t\t"));
-            Serial.print(weight1, 2);
-            Serial.print(F("g\t\t"));
-            Serial.print(weight2, 2);
-            Serial.println(F("g"));
-        
-            lastMeasurementTime = millis();
-        }
-    
-    // ↓↓↓ БЛОК ДЛЯ АВТО-ИЗМЕРЕНИЙ ↓↓↓
+}
+
+// ФУНКЦИЯ АВТО-ИЗМЕРЕНИЙ
+void handleAutoMeasurements() {
     if (commandParser.isAutoMeasure()) {
         unsigned long currentTime = millis();
         
@@ -127,8 +122,8 @@ void loop() {
             weightSensor.readValues(weight1, weight2);
             
             // Выводим в Serial
-            Serial.print(currentTime / 1000);
-            Serial.print("s\t");
+            //Serial.print(currentTime / 1000);
+            //Serial.print("s\t");
             Serial.print(currentAngle, 1);
             Serial.print("°\t\t");
             Serial.print(weight1, 2);
@@ -155,16 +150,36 @@ void loop() {
             }
         }
     }
+}
 
-    // ОБНОВЛЕНИЕ ДИСПЛЕЕВ (ВСЕГДА)
+// ФУНКЦИЯ НЕПРЕРЫВНЫХ ИЗМЕРЕНИЙ
+void handleContinuousMeasurements() {
+    if (commandParser.isContinuousMeasure() && 
+        millis() - lastMeasurementTime >= MEASUREMENT_INTERVAL) {
+    
+        float angle = angleSensor.getAngle();
+        float weight1, weight2;
+        weightSensor.readValues(weight1, weight2);
+    
+        // Вывод в формате таблицы
+        Serial.print(angle, 1);
+        Serial.print(F("°\t\t"));
+        Serial.print(weight1, 2);
+        Serial.print(F("g\t\t"));
+        Serial.print(weight2, 2);
+        Serial.println(F("g"));
+    
+        lastMeasurementTime = millis();
+    }
+}
+
+// ФУНКЦИЯ ОБНОВЛЕНИЯ ДИСПЛЕЕВ
+void updateDisplays() {
     if (millis() - lastDisplayUpdate >= 500) {
         // ПРОВЕРКА МАГНИТА:
         if (angleSensor.isMagnetDetected()) {
             float angle = angleSensor.getAngle();
             displayHandler.displayAngle(angle);        
-            // Вывод в Serial (если нужно)
-            // Serial.print("Angle: ");
-            // Serial.println(angle);
         } else {
             displayHandler.displayNoMagnet();
         }
@@ -175,7 +190,4 @@ void loop() {
     
         lastDisplayUpdate = millis();
     }
-   
-    stepperController.run();
-    delay(10); // если ставить больше, чем 10 -- help перестает реагировать на команды ._.
 }

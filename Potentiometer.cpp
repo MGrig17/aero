@@ -1,5 +1,7 @@
 #include "Potentiometer.h"
 #include "DisplayHandler.h"
+#include "WeightSensor.h"   
+#include "AngleSensor.h"
 
 // Конструктор: инициализация всех переменных-членов класса
 // Использует список инициализации для эффективной установки значений

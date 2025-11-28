@@ -19,7 +19,7 @@ private:
 
 public:
     CommandParser();
-   void handleCommand(const String& command, Potentiometer& pot); // осторожно, ссылка!
+    void handleCommand(const String& command, Potentiometer& pot); // осторожно, ссылка!
     void printHelp();
     
     bool isContinuousMeasure() { return continuousMeasure; }
@@ -36,7 +36,7 @@ public:
     void setLastStepTime(unsigned long time) { lastStepTime = time; }
     void stopAutoMeasure() { autoMeasure = false; }
 
-    void moveToAngle(float targetAngle);
+    void moveToAngle(float targetAngle); // перемещение от данного до данного угла
 };
 
 extern CommandParser commandParser;

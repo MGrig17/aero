@@ -17,7 +17,7 @@ public:
     AngleSensor();             // Конструктор
     void begin();              // Инициализация датчика
     void printAngle();         // Вывод угла в Serial
-    float getAngle();          // Получение калиброванного угла в пределах (-180-180)
+    float getAngle();          // Получение калиброванного угла в пределах (-180--180)
     float getPositiveAngle();          // Получение калиброванного угла в пределах (0-360)
     bool isMagnetDetected() { return magnetDetected; } // Проверка магнита
     void resetAngle();         // Сброс угла (калибровка текущего положения как 0)

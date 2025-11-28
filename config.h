@@ -22,8 +22,8 @@ const int POT_PIN = A0;
 // const int MAX_VIRTUAL_POSITION = 360;
 const unsigned long MEASUREMENT_INTERVAL = 3000;
 const int SERIAL_BAUD_RATE = 9600;
-const int LCD_I2C_ADDRESS_1 = 0x23; // на этом LCD будут выводится показания с весов
-const int LCD_I2C_ADDRESS_2 = 0x27; // -=- с магнитного датчика
+const int LCD_I2C_ADDRESS_1 = 0x27; //  на этом LCD будут выводится показания с весов
+const int LCD_I2C_ADDRESS_2 = 0x23; //-=- с магнитного датчика
 const int AS5600_I2C_ADDRESS = 0x36;
 
 // Калибровочные коэффициенты по умолчанию

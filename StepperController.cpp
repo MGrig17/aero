@@ -1,4 +1,5 @@
 #include "StepperController.h"
+#include "AngleSensor.h"
 
 StepperController stepperController;
 
