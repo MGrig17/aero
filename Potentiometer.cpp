@@ -10,25 +10,19 @@ Potentiometer::Potentiometer(uint8_t potPin, int minVal, int maxVal, int maxStep
       // Все переменные инициализированы в списке инициализации выше 
 }
 
-// Инициализация потенциометра
-void Potentiometer::begin() {
-    pinMode(pin, INPUT);  // Настраиваем пин как вход
-    lastValue = readRaw(); // Считываем начальное значение для отслеживания изменений
+// // Инициализация потенциометра
+// void Potentiometer::begin() {
+//     pinMode(pin, INPUT);  // Настраиваем пин как вход
+//     lastValue = readRaw(); // Считываем начальное значение для отслеживания изменений
 
-    int potValue = readSteps();
-    if (potValue > 0) {
-
-        displayHandler.displayMessage("Turn pot to", "min position!"); // вывод на экранчик
-        Serial.println("Поверните потенциометр в крайнее положение"); // -=- serial
-        while (potValue > 0) {
-            delay(200);
-            potValue = readSteps();
-        }
-        displayHandler.displayMessage("Pot ready!", "Thanks!"); // можно ли убрать thanks? почему данные через запятую?
-        Serial.println("Спасибо! Потенциометр установлен в крайнее положение.");
-        
-    }
-}
+//     int potValue = readSteps();
+//     if (potValue > 0) {
+//         while (potValue > 0) {
+//             delay(200);
+//             potValue = readSteps();
+//         }        
+//     }
+// }
 
 int Potentiometer::readSteps() {
     int rawValue = readRaw();

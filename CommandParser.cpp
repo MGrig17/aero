@@ -14,31 +14,61 @@ CommandParser::CommandParser() // КОНСТРУКТОР
 
 // Функция перемещения 
 void CommandParser::moveToAngle(float targetAngle) {
+    const float TOLERANCE = 0.0f;
+    const float STEPS_PER_DEGREE = 16.0f; //
+    const int MAX_STEPS_PER_MOVE = 65;
+    
     float currentAngle = angleSensor.getAngle();
-
-    // Нормализация целевого угла к диапазону 0-360
-    while (targetAngle < 0) targetAngle += 360;
-    while (targetAngle >= 360) targetAngle -= 360;
+    int iteration = 0;
+    const int MAX_ITERATIONS = 10;
     
-    // Вычисление минимальной разницы углов
-    float angleDiff = targetAngle - currentAngle; 
+    Serial.print("Target: ");
+    Serial.print(targetAngle, 1);
+    Serial.print("°, Current: ");
+    Serial.print(currentAngle, 1);
+    Serial.println("°");
     
-    // Корректировка для минимального пути
-    if (angleDiff > 180) angleDiff -= 360;
-    else if (angleDiff < -180) angleDiff += 360;
-    
-    int steps = angleDiff * 16; // 1/0.0625 = 16 шагов ////////////////////////////////////////////// поправить расчет угла 1
-    
-    if (steps != 0) {
-        // Serial.print("Moving to ");
-        // Serial.print(targetAngle);
-        // Serial.print("° (");
-        // Serial.print(steps);
-        // Serial.println(" steps)");
+    while (abs(currentAngle - targetAngle) > TOLERANCE && iteration < MAX_ITERATIONS) {
+        iteration++;
+        
+        float angleDiff = targetAngle - currentAngle;
+        
+        if (angleDiff > 180.0f) angleDiff -= 360.0f;
+        else if (angleDiff < -180.0f) angleDiff += 360.0f;
+        
+        int steps = round(angleDiff * STEPS_PER_DEGREE) * -1;
+        
+        if (abs(steps) > MAX_STEPS_PER_MOVE) {
+            steps = (steps > 0) ? MAX_STEPS_PER_MOVE : -MAX_STEPS_PER_MOVE;
+        }
+        
+        if (abs(steps) < 3) break;
+        
+        // ПРОВЕРЯЕМ ОГРАНИЧЕНИЯ ДВИЖЕНИЯ
+        long newPosition = stepperController.getTotalSteps() + steps;
+        if (!stepperController.canMoveTo(newPosition)) {
+            Serial.println("Movement limit reached! Stopping.");
+            break;
+        }
+        
+        Serial.print("Step ");
+        Serial.print(iteration);
+        Serial.print(": ");
+        Serial.print(steps);
+        Serial.print(" steps");
         
         stepperController.moveSteps(steps);
-        delay(500); // Даем время на стабилизацию
+        delay(800);
+        
+        currentAngle = angleSensor.getAngle();
+        
+        Serial.print(" -> ");
+        Serial.print(currentAngle, 1);
+        Serial.println("°");
     }
+    
+    Serial.print("Final: ");
+    Serial.println(angleSensor.getAngle(), 1);
 }
 
 void CommandParser::handleCommand(const String& command, Potentiometer& pot) {
@@ -71,26 +101,26 @@ void CommandParser::handleCommand(const String& command, Potentiometer& pot) {
         Serial.println(stepperController.getTotalSteps());
     }
 
-    else if (cmd == "start-measure") { 
-        // Получаем данные
-        float angle = angleSensor.getAngle();
-        float weight1, weight2;
-        weightSensor.readValues(weight1, weight2);
+    // else if (cmd == "start-measure") { 
+    //     // Получаем данные
+    //     float angle = angleSensor.getAngle();
+    //     float weight1, weight2;
+    //     weightSensor.readValues(weight1, weight2);
 
-        continuousMeasure = true;
-        potMode = false;
-        autoMeasure = false; // ←  выключаем авто-режим
+    //     continuousMeasure = true;
+    //     potMode = false;
+    //     autoMeasure = false; // ←  выключаем авто-режим
         
-        Serial.println("=== CONTINUOUS MEASUREMENTS STARTED ===");
-        // Вывод в формате таблицы
-        Serial.println("Angle\t\t1TD\t\t2TD");
-        Serial.print(angle, 1);
-        Serial.print("°\t\t");
-        Serial.print(weight1, 2);
-        Serial.print("g\t\t");
-        Serial.print(weight2, 2);
-        Serial.println("g");
-    }
+    //     Serial.println("=== CONTINUOUS MEASUREMENTS STARTED ===");
+    //     // Вывод в формате таблицы
+    //     Serial.println("Angle\t\t1TD\t\t2TD");
+    //     Serial.print(angle, 1);
+    //     Serial.print("°\t\t");
+    //     Serial.print(weight1, 2);
+    //     Serial.print("g\t\t");
+    //     Serial.print(weight2, 2);
+    //     Serial.println("g");
+    // }
 
     // ↓↓↓ ДОБАВИТЬ НОВУЮ КОМАНДУ measure С ПАРАМЕТРАМИ ↓↓↓
     else if (cmd.startsWith("measure ")) {
@@ -149,6 +179,26 @@ void CommandParser::handleCommand(const String& command, Potentiometer& pot) {
     else if (cmd == "mode_pot") {
         potMode = true;   // ← РЕЖИМ ПОТЕНЦИОМЕТРА
         continuousMeasure = false;
+        autoMeasure = false;
+        
+        // ВЫВОД СООБЩЕНИЯ ПРИ ВХОДЕ В РЕЖИМ
+        displayHandler.displayMessage("Turn pot to", "min position!");
+        Serial.println("POTENTIOMETER MODE: Turn potentiometer to minimum position!");
+
+        // Ждем установки в минимальное положение
+        int potValue = pot.readSteps();
+        while (potValue > 0) {
+            delay(200);
+            potValue = pot.readSteps();
+        }
+
+         displayHandler.displayMessage("Pot ready!", "Thank you!");
+        Serial.println("Potentiometer initialized! Ready for control.");
+        delay(1000);
+    
+        // Очищаем и возвращаем нормальный вид дисплеям
+        displayHandler.clear();
+    
         Serial.println("POTENTIOMETER MODE: Use pot for control");
 
         //  Serial.println("Moving -590 steps to initial position...");
@@ -172,13 +222,19 @@ void CommandParser::handleCommand(const String& command, Potentiometer& pot) {
         Serial.print(currentAngle, 1);
         Serial.println("°");
     }
+    else if (cmd == "time"){
+        unsigned long currentTime = millis();
+        Serial.print(currentTime / 1000);
+        Serial.print("s\t");
+    }
 
     else if (cmd == "help") {
         printHelp();
     } 
     else if (cmd.toInt() != 0 || cmd.startsWith("-")) {
         stepperController.moveSteps(cmd.toInt());
-    } 
+    }
+     
     else {
         Serial.println("Unknown command: " + cmd);
         printHelp();
@@ -190,13 +246,14 @@ void CommandParser::printHelp() {
     Serial.println(F("=== HELP ==="));
     Serial.println(F("mode_auto   - command mode (default)"));
     Serial.println(F("mode_pot    - potentiometer mode"));
-        Serial.println(F("measure (start end step) - auto measurements (degrees)"));
+    Serial.println(F("measure (start end step) - auto measurements (degrees)"));
     Serial.println(F("stop        - stop measurements"));  // в mode_auto
     Serial.println(F("tare        - reset tare for sensors"));  // в mode_auto
     Serial.println(F("status      - show stepper status"));  // в mode_auto
     Serial.println(F("steps       - show total steps from home"));  // в mode_auto
     Serial.println(F("home        - home stepper"));  // в mode_auto
     Serial.println(F("N           - move N steps"));  // в mode_auto
+    Serial.println(F("time"));
     //Serial.println(F("start-measure - read angle + weights")); // в mode_auto
     //Serial.println(F("angle        - return angle"));
     Serial.println(F("help        - show this help"));

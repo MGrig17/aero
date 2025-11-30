@@ -18,12 +18,17 @@ float angle = 0;
 unsigned long lastMeasurementTime = 0;
 unsigned long lastDisplayUpdate = 0;
 unsigned long lastStepTime = 0;
+
+// unsigned long lastMotorActivity = 0;
+// const unsigned long MOTOR_IDLE_TIMEOUT = 5000; // 5 секунд бездействия
+
 Potentiometer pot(POT_PIN);
 
 void pot_func();
 void handleContinuousMeasurements();
 void handleAutoMeasurements();
 void updateDisplays();
+
 
 void setup() {
     Serial.begin(SERIAL_BAUD_RATE);
@@ -66,9 +71,9 @@ void setup() {
     Serial.println(F("Before angle sensor..."));
     angleSensor.begin(); // ← Если зависнет здесь, будем знать
     Serial.println(F("After angle sensor..."));
-    Serial.println(F("Initializing potentiometer..."));
-    pot.begin();
-    Serial.println(F("Potentiometer initialized!"));
+    // Serial.println(F("Initializing potentiometer..."));
+    // pot.begin();
+    // Serial.println(F("Potentiometer initialized!"));
     Serial.println(F("=== INTEGRATED SYSTEM READY ==="));
     commandParser.printHelp();
 }
@@ -79,12 +84,21 @@ void loop() {
     if (Serial.available() > 0) {
         String command = Serial.readStringUntil('\n');
         commandParser.handleCommand(command, pot);
-    } 
+        
+    }
+        
     // ИЗМЕРЕНИЯ ТОЛЬКО В АВТО-РЕЖИМЕ 
     pot_func(); // режим управления через потенциометр
     handleContinuousMeasurements();  // НЕПРЕРЫВНЫЕ ИЗМЕРЕНИЯ В ФОРМАТЕ Angle+Weights    
     handleAutoMeasurements();// ДЛЯ АВТО-ИЗМЕРЕНИЙ  
     updateDisplays(); // ОБНОВЛЕНИЕ ДИСПЛЕЕВ (ВСЕГДА)
+
+    // // АВТОМАТИЧЕСКОЕ ОТКЛЮЧЕНИЕ МОТОРА ← ДОБАВИТЬ ЭТО
+    // if (stepperController.isMotorEnabled() && 
+    //     (millis() - lastMotorActivity > MOTOR_IDLE_TIMEOUT)) {
+    //     stepperController.disable();
+    //     Serial.println("Motor disabled (idle timeout)");
+    // }
 
     stepperController.run();
     delay(10); // если ставить больше, чем 10 -- help перестает реагировать на команды ._.
@@ -96,14 +110,15 @@ void loop() {
 void pot_func() {
     if (commandParser.isPotMode()) {
         // Прямое преобразование вместо calculateDelta()
-        int targetSteps = map(pot.readRaw(), 0, 1023, -590, 410); // не от 0 до 1000 
+        int targetSteps = map(pot.readRaw(), 0, 1023, -500, 500); // не от 0 до 1000 
         int currentSteps = pot.getPosition();
         int delta = targetSteps - currentSteps;
     
         if (abs(delta) > 2) {
             // int moveSteps = constrain(delta, -50, 50); // ограничение скорости
-            stepperController.moveSteps(delta);
-            pot.setPosition(targetSteps); // точная установка позиции
+            stepperController.moveSteps(delta); // 
+            pot.setPosition(targetSteps); // точная установка позиции 
+            
         }
     }
 }
@@ -122,8 +137,8 @@ void handleAutoMeasurements() {
             weightSensor.readValues(weight1, weight2);
             
             // Выводим в Serial
-            //Serial.print(currentTime / 1000);
-            //Serial.print("s\t");
+            // Serial.print(currentTime / 1000);
+            // Serial.print("s\t");
             Serial.print(currentAngle, 1);
             Serial.print("°\t\t");
             Serial.print(weight1, 2);

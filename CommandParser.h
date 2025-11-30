@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "config.h"
 #include "Potentiometer.h"
+  #include "DisplayHandler.h"
 
 class CommandParser {
 private:

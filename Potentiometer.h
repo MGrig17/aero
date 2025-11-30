@@ -18,7 +18,7 @@ public:
     // minVal - минимальное значение АЦП (по умолчанию 0)
     // maxVal - максимальное значение АЦП (по умолчанию 1023)
     // maxStepsVal - максимальное количество шагов мотора (по умолчанию 500)
-    Potentiometer(uint8_t potPin, int minVal = 0, int maxVal = 1023, int maxStepsVal = 1000);
+    Potentiometer(uint8_t potPin, int minVal = 0, int maxVal = 1023, int maxStepsVal = 1090);
   //Методы:
     void begin(); // Инициализация: настраивает пин и считывает начальное значение
     int readSteps(); // Чтение значения, преобразованного в шаги мотора (0 - maxSteps)

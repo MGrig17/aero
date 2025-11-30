@@ -1,123 +1,121 @@
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.09
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.09
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.00
-0.09
-0.09
-0.00
-0.00
-0.00
-0.00
-0.26
-0.35
-0.00
-0.26
-0.09
-0.09
-3.96
-19.78
-32.43
-42.45
-54.67
-56.60
-56.51
-56.60
-56.34
-52.82
-42.28
-41.92
-34.54
-25.93
-21.01
-20.92
-20.92
-20.92
-20.92
-24.08
-33.22
-43.24
-58.80
-61.96
-61.96
-61.88
-61.88
-62.40
-66.97
-72.69
-72.95
-72.95
-72.95
-72.42
-71.46
-65.57
-56.25
-46.67
-44.30
-44.30
-44.47
-40.43
-35.95
-35.95
-35.68
-36.47
-46.58
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
-51.06
+
+==================================================
+Сессия начата: 2025-11-30 13:29:01
+==================================================
+[13:29:01] ARDUINO: === I2C SCANNER ===
+[13:29:01] ARDUINO: I2C device found at 0x23
+[13:29:01] ARDUINO: I2C device found at 0x27
+[13:29:01] ARDUINO: I2C device found at 0x36
+[13:29:01] ARDUINO: === SCAN COMPLETE ===
+[13:29:01] ARDUINO: Initializing displayHandler...
+[13:29:01] ARDUINO: DisplayHandler initialized!
+[13:29:01] ARDUINO: Initializing weightSensor...
+[13:29:03] ARDUINO: WeightSensor initialized!
+[13:29:03] ARDUINO: Initializing stepperController...
+[13:29:03] ARDUINO: Homing...
+[13:29:07] ARDUINO: Cannot reset angle - no magnet!
+[13:29:07] ARDUINO: Homing complete!
+[13:29:07] ARDUINO: 0
+[13:29:07] ARDUINO: StepperController initialized!
+[13:29:07] ARDUINO: Before angle sensor...
+[13:29:07] ARDUINO: Angle calibrated. Offset: 125.07
+[13:29:07] ARDUINO: After angle sensor...
+[13:29:07] ARDUINO: === INTEGRATED SYSTEM READY ===
+[13:29:07] ARDUINO: === HELP ===
+[13:29:07] ARDUINO: mode_auto   - command mode (default)
+[13:29:07] ARDUINO: mode_pot    - potentiometer mode
+[13:29:07] ARDUINO: measure (start end step) - auto measurements (degrees)
+[13:29:07] ARDUINO: stop        - stop measurements
+[13:29:07] ARDUINO: tare        - reset tare for sensors
+[13:29:07] ARDUINO: status      - show stepper status
+[13:29:07] ARDUINO: steps       - show total steps from home
+[13:29:08] ARDUINO: home        - home stepper
+[13:29:08] ARDUINO: N           - move N steps
+[13:29:08] ARDUINO: time
+[13:29:08] ARDUINO: help        - show this help
+[13:29:08] ARDUINO: ==================
+[13:29:13] ARDUINO: Motor auto-disabled (idle)
+[13:29:24] COMMAND: measurmeasure 0 20 5
+[13:29:25] ARDUINO: Unknown command: measurmeasure 0 20 5
+[13:29:25] ARDUINO: === HELP ===
+[13:29:25] ARDUINO: mode_auto   - command mode (default)
+[13:29:25] ARDUINO: mode_pot    - potentiometer mode
+[13:29:25] ARDUINO: measure (start end step) - auto measurements (degrees)
+[13:29:25] ARDUINO: stop        - stop measurements
+[13:29:25] ARDUINO: tare        - reset tare for sensors
+[13:29:25] ARDUINO: status      - show stepper status
+[13:29:25] ARDUINO: steps       - show total steps from home
+[13:29:25] ARDUINO: home        - home stepper
+[13:29:25] ARDUINO: N           - move N steps
+[13:29:25] ARDUINO: time
+[13:29:25] ARDUINO: help        - show this help
+[13:29:25] ARDUINO: ==================
+[13:29:38] COMMAND: measure 0 20 5
+[13:29:38] ARDUINO: === AUTO MEASUREMENT STARTED ===
+[13:29:38] ARDUINO: Range: 0.00° to 20.00°, Step: 5.00°
+[13:29:38] ARDUINO: Time	Angle		1TD		2TD
+[13:29:38] ARDUINO: Target: 0.0°, Current: 0.7°
+[13:29:38] ARDUINO: Step 1: 9 stepsMoving 9 steps
+[13:29:38] ARDUINO: Moving 9 steps (pos: 9)
+[13:29:38] ARDUINO: Move complete!
+[13:29:39] ARDUINO: -> 1.4°
+[13:29:39] ARDUINO: Step 2: 18 stepsMoving 18 steps
+[13:29:39] ARDUINO: Moving 18 steps (pos: 27)
+[13:29:39] ARDUINO: Move complete!
+[13:29:40] ARDUINO: -> 0.4°
+[13:29:40] ARDUINO: Step 3: 6 stepsMoving 6 steps
+[13:29:40] ARDUINO: Moving 6 steps (pos: 33)
+[13:29:40] ARDUINO: Move complete!
+[13:29:40] ARDUINO: -> -0.2°
+[13:29:40] ARDUINO: Final: -0.2
+[13:29:41] ARDUINO: -0.2°		0.65g		0.00g
+[13:29:41] ARDUINO: Target: 5.0°, Current: -0.2°
+[13:29:41] ARDUINO: Step 1: -65 stepsMoving -65 steps
+[13:29:41] ARDUINO: Moving -65 steps (pos: -32)
+[13:29:41] ARDUINO: Move complete!
+[13:29:42] ARDUINO: -> 4.3°
+[13:29:42] ARDUINO: Step 2: -9 stepsMoving -9 steps
+[13:29:42] ARDUINO: Moving -9 steps (pos: -41)
+[13:29:42] ARDUINO: Move complete!
+[13:29:43] ARDUINO: -> 5.2°
+[13:29:43] ARDUINO: Final: 5.2
+[13:29:44] ARDUINO: 5.1°		0.55g		0.00g
+[13:29:44] ARDUINO: Target: 10.0°, Current: 5.2°
+[13:29:44] ARDUINO: Step 1: -63 stepsMoving -63 steps
+[13:29:45] ARDUINO: Moving -63 steps (pos: -104)
+[13:29:45] ARDUINO: Move complete!
+[13:29:45] ARDUINO: -> 9.7°
+[13:29:45] ARDUINO: Step 2: -4 stepsMoving -4 steps
+[13:29:45] ARDUINO: Moving -4 steps (pos: -108)
+[13:29:45] ARDUINO: Move complete!
+[13:29:46] ARDUINO: -> 10.0°
+[13:29:46] ARDUINO: Final: 10.0
+[13:29:47] ARDUINO: 9.9°		0.00g		0.00g
+[13:29:48] ARDUINO: Target: 15.0°, Current: 10.0°
+[13:29:48] ARDUINO: Step 1: -65 stepsMoving -65 steps
+[13:29:48] ARDUINO: Moving -65 steps (pos: -173)
+[13:29:48] ARDUINO: Move complete!
+[13:29:49] ARDUINO: -> 14.5°
+[13:29:49] ARDUINO: Step 2: -6 stepsMoving -6 steps
+[13:29:49] ARDUINO: Moving -6 steps (pos: -179)
+[13:29:49] ARDUINO: Move complete!
+[13:29:49] ARDUINO: -> 14.9°
+[13:29:49] ARDUINO: Final: 14.9
+[13:29:51] ARDUINO: 14.9°		0.00g		0.00g
+[13:29:51] ARDUINO: Target: 20.0°, Current: 14.9°
+[13:29:51] ARDUINO: Step 1: -65 stepsMoving -65 steps
+[13:29:51] ARDUINO: Moving -65 steps (pos: -244)
+[13:29:51] ARDUINO: Move complete!
+[13:29:52] ARDUINO: -> 19.3°
+[13:29:52] ARDUINO: Step 2: -9 stepsMoving -9 steps
+[13:29:52] ARDUINO: Moving -9 steps (pos: -253)
+[13:29:52] ARDUINO: Move complete!
+[13:29:53] ARDUINO: -> 20.0°
+[13:29:53] ARDUINO: Final: 20.0
+[13:29:54] ARDUINO: 20.0°		0.00g		0.00g
+[13:29:54] ARDUINO: === AUTO MEASUREMENT COMPLETED ===
+[13:30:02] ARDUINO: Motor auto-disabled (idle)
+==================================================
+Сессия завершена: 2025-11-30 13:30:04
+==================================================
+

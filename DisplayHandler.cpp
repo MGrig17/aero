@@ -45,7 +45,13 @@ void DisplayHandler::displayWeights(float weight1, float weight2) {
     // lcd.print(weight2, 1);
     // lcd.print("   ");
 
-    // ТОЛЬКО на дисплей весов (0x3F)
+    // ВОССТАНАВЛИВАЕМ подписи если они пропали
+    lcdWeights.setCursor(0, 0);
+    lcdWeights.print("1TD:");
+    lcdWeights.setCursor(0, 1);
+    lcdWeights.print("2TD:");
+
+    // ТОЛЬКО на дисплей весов 
     lcdWeights.setCursor(5, 0);  // После "1TD: "
     lcdWeights.print(weight1, 1);
     lcdWeights.print("g   ");
@@ -56,15 +62,23 @@ void DisplayHandler::displayWeights(float weight1, float weight2) {
 }
 
 void DisplayHandler::displayAngle(float angle) {
+    // ВОССТАНАВЛИВАЕМ подпись если она пропала
+    lcdAngle.setCursor(0, 0);
+    lcdAngle.print("Angle:");
 
-    // ТОЛЬКО на дисплей угла (0x27)
+    // ТОЛЬКО на дисплей угла 
     lcdAngle.setCursor(7, 0);  // После "Angle: "
-    lcdAngle.print(-angle, 1); //////////////////////////////////////////////////////////////смена знака
+    lcdAngle.print(angle, 1); //////////////////////////////////////////////////////////////смена знака
     lcdAngle.print((char)223); 
     lcdAngle.print("   ");     
 }
 
 void DisplayHandler::displayNoMagnet() {
+
+    // ВОССТАНАВЛИВАЕМ подпись
+    lcdAngle.setCursor(0, 0);
+    lcdAngle.print("Angle:");
+    
     // Сообщение об отсутствии магнита
     lcdAngle.setCursor(7, 0);
     lcdAngle.print("No Magnet!    ");
