@@ -7,7 +7,7 @@ angles = []
 weights1 = []
 weights2 = []
 
-with open('data0.txt', 'r', encoding='utf-8') as file:
+with open('data-example.txt', 'r', encoding='utf-8') as file:
     lines = file.readlines()
 
     for line in lines:
@@ -102,7 +102,7 @@ ax1.legend()
 ax2.plot(angles, weights2_inverted, 'r-', linewidth=2, marker='s', markersize=4, label='ТД2')
 ax2.set_xlabel('Угол (°)', fontsize=12)
 ax2.set_ylabel('LIFT (гс)', fontsize=12)
-ax2.set_title('Зависимость веса от угла\nLIFT(тд2) (инвертированный)', fontsize=14, fontweight='bold')
+ax2.set_title('Зависимость веса от угла\nLIFT(тд2)', fontsize=14, fontweight='bold')
 ax2.grid(True, alpha=0.3)
 ax2.legend()
 
@@ -124,11 +124,11 @@ print(data_table.to_string(index=False))
 
 
 
-# Дополнительная статистика
-print("\nДОПОЛНИТЕЛЬНАЯ СТАТИСТИКА:")
-print(f"Среднее значение ТД1: {np.mean(weights1):.2f}гс")
-print(f"Среднее значение ТД2: {np.mean(weights2_inverted):.2f}гс")
-print(f"Стандартное отклонение ТД1: {np.std(weights1):.2f}гс")
-print(f"Стандартное отклонение ТД2: {np.std(weights2_inverted):.2f}гс")
+# # Дополнительная статистика
+# print("\nДОПОЛНИТЕЛЬНАЯ СТАТИСТИКА:")
+# print(f"Среднее значение ТД1: {np.mean(weights1):.2f}гс")
+# print(f"Среднее значение ТД2: {np.mean(weights2_inverted):.2f}гс")
+# print(f"Стандартное отклонение ТД1: {np.std(weights1):.2f}гс")
+# print(f"Стандартное отклонение ТД2: {np.std(weights2_inverted):.2f}гс")
 
 plt.show()
