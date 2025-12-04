@@ -7,7 +7,7 @@ angles = []
 weights1 = []
 weights2 = []
 
-with open('data.txt', 'r', encoding='utf-8') as file:
+with open('data0.txt', 'r', encoding='utf-8') as file:
     lines = file.readlines()
 
     for line in lines:
@@ -93,16 +93,16 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 # График для 1-го тензодатчика
 ax1.plot(angles, weights1, 'b-', linewidth=2, marker='o', markersize=4, label='ТД1')
 ax1.set_xlabel('Угол (°)', fontsize=12)
-ax1.set_ylabel('LIFT (g)', fontsize=12)
-ax1.set_title('Зависимость веса от угла\nLIFT(тд1)', fontsize=14, fontweight='bold')
+ax1.set_ylabel('DRAG (гс)', fontsize=12)
+ax1.set_title('Зависимость веса от угла\nDRAG(тд1)', fontsize=14, fontweight='bold')
 ax1.grid(True, alpha=0.3)
 ax1.legend()
 
 # График для 2-го тензодатчика (инвертированный)
 ax2.plot(angles, weights2_inverted, 'r-', linewidth=2, marker='s', markersize=4, label='ТД2')
 ax2.set_xlabel('Угол (°)', fontsize=12)
-ax2.set_ylabel('DRAG (g)', fontsize=12)
-ax2.set_title('Зависимость веса от угла\nDRAG(тд2) (инвертированный)', fontsize=14, fontweight='bold')
+ax2.set_ylabel('LIFT (гс)', fontsize=12)
+ax2.set_title('Зависимость веса от угла\nLIFT(тд2) (инвертированный)', fontsize=14, fontweight='bold')
 ax2.grid(True, alpha=0.3)
 ax2.legend()
 
@@ -112,8 +112,8 @@ plt.savefig('plot.png', dpi=300, bbox_inches='tight')
 # Создаем DataFrame для табличного представления данных
 data_table = pd.DataFrame({
     'Угол, °': angles,
-    'LIFT(тд1), g': weights1,
-    'DRAG(тд2), g': weights2
+    'LIFT(тд1), гс': weights1,
+    'DRAG(тд2), гс': weights2
 })
 
 # Выводим таблицу с данными
@@ -126,9 +126,9 @@ print(data_table.to_string(index=False))
 
 # Дополнительная статистика
 print("\nДОПОЛНИТЕЛЬНАЯ СТАТИСТИКА:")
-print(f"Среднее значение ТД1: {np.mean(weights1):.2f}g")
-print(f"Среднее значение ТД2: {np.mean(weights2_inverted):.2f}g")
-print(f"Стандартное отклонение ТД1: {np.std(weights1):.2f}g")
-print(f"Стандартное отклонение ТД2: {np.std(weights2_inverted):.2f}g")
+print(f"Среднее значение ТД1: {np.mean(weights1):.2f}гс")
+print(f"Среднее значение ТД2: {np.mean(weights2_inverted):.2f}гс")
+print(f"Стандартное отклонение ТД1: {np.std(weights1):.2f}гс")
+print(f"Стандартное отклонение ТД2: {np.std(weights2_inverted):.2f}гс")
 
 plt.show()
